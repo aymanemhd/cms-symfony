@@ -1,0 +1,28 @@
+{% include('form/form.html.twig') %}
+<form>
+  <label for="sommary">sommary</label>
+  <input type="text" name="sommary"><br><br>
+  <label for="education">education</label>
+  <input type="text" name="education"><br><br>
+  <label for="experience">experience</label>
+  <input type="text" name="experience"><br><br>
+  <button type="button" class="btn btn-primary">ajouter</button>
+  <button type="button" class="btn btn-info">modifier</button>
+  <button type="button" class="btn btn-danger">supprimer</button>
+  <button type="button" class="btn btn-success">Success</button>
+</form>
+<style>
+input {
+  border-radius: 12px;
+  box-sizing: border-box;
+  border:0.1px;
+  font-size: 20px;
+  outline: 0;
+  padding: 4px 20px 0;
+}
+form{
+    margin-left:400px;
+    margin-top:100px;
+}
+</style>
+{% include('footer/footer.html.twig') %}

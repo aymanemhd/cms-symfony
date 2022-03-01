@@ -1,0 +1,11 @@
+index:
+    path: /
+    controller: App\Controller\SectionController::index
+
+home:
+    path: /home
+    controller: App\Controller\SectionController::home
+
+resume:
+    path: /resume
+    controller: App\Controller\SectionController::resume
