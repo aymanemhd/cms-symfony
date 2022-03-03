@@ -7,8 +7,8 @@
 
 
 		<div class="col-md-12">
-			<h4>gestion education</h4>
-			<a href='{{path('ajouteducation')}}' type="button" class="btn btn-primary">ajouter</a>
+			<h4>gestion experience</h4>
+			<a href='{{path('ajouterexperience')}}' type="button" class="btn btn-primary">ajouter</a>
 
 			<div class="table-responsive">
 				<table id="mytable" class="table table-bordred table-striped">
@@ -27,12 +27,12 @@
 								
 								<td>
 									<p data-placement="top" data-toggle="tooltip" title="Edit">
-										<a href='{{path('modifieducation',{'id':i.id})}}' type="button" class="btn btn-success">modifier</a>
+										<a href='{{path('modifierexperience',{'id':i.id})}}' type="button" class="btn btn-success">modifier</a>
 									</p>
 								</td>
 								<td>
 									<p data-placement="top" data-toggle="tooltip" title="Delete">
-										<a href= '{{path('supprimereducation',{'id':i.id})}}' type="button" class="btn btn-danger" data-toggle="modal" data-target="#supprimer">supprimer</a>
+										<a href= '{{path('supprimerexperience',{'id':i.id})}}' type="button" class="btn btn-danger" data-toggle="modal" data-target="#supprimer">supprimer</a>
 									</p>
 								</td>
 							</tr>
