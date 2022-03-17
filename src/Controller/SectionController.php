@@ -9,6 +9,7 @@ use\App\Repository\SectionRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Section;
 use Doctrine\ORM\EntityManagerInterface;
+use \Datetime;
 use App\Form\SectionType;
 
 class SectionController extends AbstractController
@@ -45,15 +46,65 @@ class SectionController extends AbstractController
             'section' => $section,
         ]);
     }
+    private $em;
+    public function __construct(EntityManagerInterface $em){
+        $this->em = $em;
+    }
+    
+    /**
+     * @Route("/getInfoExperience/{id}")
+     */
+    public function getInfoExperience($id){
+        try {
+            $data = $this->em->find(Section::class,$id);
 
+            return $this->json($data,Response::HTTP_OK);
+        }catch(Exception $ex){
+            return $this->json("error j",Response::HTTP_BAD_REQUEST);
+        }
+    }
+    
+    /**
+     * @Route("/modifierExp")
+     */
+    public function modifierExp(Request $request){
+        try {
+            $data = json_decode($request->getContent());
+            $exp = $this->em->find(Section::class,(int)$data->id);
+            $exp->setTitle($data->title);
+         
+            $exp->setDescription($data->description);
+            $date = new DateTime($data->year."-".$data->month."-".$data->day);
+            $exp->setDate($date);
+            $this->em->persist($exp);
+            $this->em->flush();
+
+            return $this->json("modifier success",Response::HTTP_OK);
+        }catch(Exception $ex){
+            return $this->json($ex,Response::HTTP_BAD_REQUEST);
+        }
+    }
     /**
      * @Route("/experience", name="experience")
      */
-    public function experience(SectionRepository $sectionRepository): Response
+    public function experience( Section $section=null ,SectionRepository $sectionRepository,Request $request): Response
     {
-        $section=$sectionRepository->findAll();
+        $sections=$sectionRepository->findAll();
+
+        if(!$section){ $section = new Section(); }
+
+        $form = $this->createForm(SectionType::class, $section);
+        $form->handleRequest($request);
+        if ($form->isSubmitted()&& $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($section);
+            $em->flush();
+            $this->addFlash('success','add successeful !');
+            return $this->redirectToRoute('section');
+        }
         return $this->render('experience/experience.html.twig', [
-            'section' => $section,
+            'section' => $sections,
+            'form' => $form->createView()
         ]);
     }
    
@@ -82,25 +133,24 @@ class SectionController extends AbstractController
     //experience
 
 
-     /**
-     * @Route("/experience/create",name="ajouterexperience" )
-     */
-    public function ajouterexperience(Request $request) {
-        $section = new Section();
-        $form = $this->createForm(SectionType::class, $section);
-        $form->handleRequest($request);
-        if ($form->isSubmitted()&& $form->isValid()){
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($section);
-            $entityManager->flush();
-        $this->addFlash('success','jghggh');
-           return $this->redirectToRoute('section');
-
-        }
-        return $this->render('experience/create.html.twig', [
-            'form' => $form->createView()
-        ]);
-    }
+    //  /**
+    //  * @Route("/experience",name="ajouterexperience" )
+    //  */
+    // public function ajouterexperience(Request $request) {
+    //     $section = new Section();
+    //     $form = $this->createForm(SectionType::class, $section);
+    //     $form->handleRequest($request);
+    //     if ($form->isSubmitted()&& $form->isValid()){
+    //         $em = $this->getDoctrine()->getManager();
+    //         $em->persist($section);
+    //         $em->flush();
+    //         $this->addFlash('success','add successeful !');
+    //         return $this->redirectToRoute('section');
+    //     }
+    //     return $this->render('experience/experience.html.twig', [
+    //         'form' => $form->createView()
+    //     ]);
+    // }
 
     /**
      * @Route("/experience/update/{id}",name="modifierexperience" )
@@ -129,7 +179,7 @@ class SectionController extends AbstractController
      /**
      * @Route("/experience/{id}", name="supprimerexperience")
      */
-    public function supprimerexperience(Request $request,$id): Response
+    public function supprimerexperience($id): Response
     {
         $section = $this->getDoctrine()->getRepository(Section::class);
         $section = $section->find($id);
